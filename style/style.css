@@ -3,4 +3,42 @@
     --hac-marine: #002e5d;
     --white :#ffff;
     --grey : #c0c0c0;
+    --hac-gold:#c59d5a;
+}
+
+body{
+    background: linear-gradient(var(--hac-ciel),var(--hac-marine));
+    
+}
+.red{
+    background-image: url(../img/red-container.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    filter: brightness(50%)
+}
+
+.green{
+    background-image: url(../img/green-container.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+    justify-content:space-around;
+}
+
+.participant-card {
+    display: flex;
+    flex-direction: column;
+    width: 40vw;
+    gap: 0.3rem;
+
+}
+
+aside{
+    display: flex;
+    flex-direction: column;
+    width: 20vw;
 }

@@ -3,12 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maracatenes</title>
+    <link rel="stylesheet" href="style/style.css">
+    <title>Maracatènes</title>
 </head>
 <body>
+    <header>
+        <h1>Maracatènes</h1>
+        <p>Départ dimanche 30 mai à 09h00</p>
+    </header>
+
+
+
+    <div class="main-container">
+        <section class="forms-section">
+            <form action="">
+                <fieldset class="red">
+
+                    <legend>Participant 1</legend>
+                
+
+                        <div class="participant-card" id="participant-1">
+                            <label for="lastname" id="lastname">Nom*</label>
+                            <input type="text" name="Nom" required>
+
+                            <label for="firstname" id="firstname">Prénom*</label>
+                            <input type="text" name="Prénom" required>
+        
+                            <label for="age" id="age">Age*</label>
+                            <input type="number" name="Age" required min="10" max="99">
+
+                            <label for="email" id="email">E-mail*</label>
+                            <input type="email" name="E-mail" required placeholder="exemple@email.com">
+  
+                            <label for="tel" id="tel">Téléphone*</label>
+                            <input type="tel" name="Téléphone" required placeholder="07 03 45 78 42" pattern="[0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2} [0-9]{2}">
+                
+                            <input type="radio" name="marathon" id="Semi-marathon" required>
+                            <label for="semi" id="semi">Semi-marathon</label>
+                            <input type="radio" name="marathon" id="Marathon classique" required>
+                            <label for="classique" id="classique">Marathon classique</label>
+                    
+                            <input type="radio" name="Capitaine" id="Capitaine" checked>
+                            <label for="captain" id="captain">Capitaine</label>
+
+                            <input type="submit" value="Valider">
+                    
+                        </div>
+                </fieldset>
+                
+                <fieldset class="green">
+
+                    <legend>Participant 2</legend>
+                
+                        <div class="participant-card" id="participant-2">
+                            <label for="lastname" id="lastname">Nom*</label>
+                            <input type="text" name="Nom" required>
+
+                            <label for="firstname" id="firstname">Prénom*</label>
+                            <input type="text" name="Prénom" required>
+
+                            <label for="age" id="age">Age*</label>
+                            <input type="number" name="Age" required min="10" max="99">
+
+                            <label for="email" id="email">E-mail*</label>
+                            <input type="email" name="E-mail" required placeholder="exemple@email.com">
+  
+                            <label for="tel" id="tel">Téléphone*</label>
+                            <input type="tel" name="Téléphone" required placeholder="07 03 45 78 42">
+                
+                            <input type="radio" name="Capitaine" id="Capitaine">
+                            <label for="captain" id="captain">Capitaine</label>
+
+                            <input type="submit" value="Valider">
+
+                            <input type="reset" value="Supprimer">
+
+
+<!-- JS :   formulaire 2 : bouton "supprimer" supprime seulement les champs 
+            prochains formulaires : bouton "supprimer" supprime le formulaire -->
+
+                            <input type="submit" value="Ajouter un participant">
+
+
+                        </div>
+
+                </fieldset>
+            </form>
+        </section>
+        
+        <aside>
+            <h2>Panier</h2>
+
+            <p>Nombre de participants</p>
+            <p>Prix</p>
+            <p>Total à payer</p>
+
+            <input type="submit" value="Valider et payer">
+            <input type="submit" value="Annuler">
+
+
+        </aside>
+
+
+    </div>
+
+   
     
-
-
-    test
 </body>
 </html>
