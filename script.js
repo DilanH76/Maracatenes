@@ -42,7 +42,7 @@ function createParticipantHTML(id) {
 
         <div class="form-group">
             <label>Age *</label>
-            <input type="number" name="age_${id}" class="input-check" min="10" max="99" required>
+            <input type="number" name="age_${id}" class="input-check" min="18" max="99" required>
         </div>
 
         <div class="form-group">
@@ -117,7 +117,9 @@ function validateInput(input) {
         isValid = emailRegex.test(value);
     } else if (input.type === "tel") {
         isValid = phoneRegex.test(value);
-    } else if (input.type === "text" || input.type === "number") {
+    } else if (input.name.startsWith("age_")) {
+        isValid = (value !== "" && parseInt(value) >= 10);
+    } else {
         isValid = value.trim() !== "";
     }
 
@@ -131,6 +133,67 @@ function validateInput(input) {
 
 }
 
+function checkForDuplicates() {
+    const cards = document.querySelectorAll('.participant-card');
+    const identities = [];
+    let hasDuplicate = false;
+
+    cards.forEach(card => {
+        const id = card.getAttribute('data-id');
+        // on recup les valuers de CETTE carte
+        const lastNameInput = card.querySelector(`input[name="lastName_${id}"]`);
+        const firstNameInput = card.querySelector(`input[name="firstName_${id}"]`);
+
+        // on ne verifie que si les champs sont rempli
+        if (identities.includes(identity)) {
+            // OUI DOUBLON ALORS : 
+            firstNameInput.classList.add('invalid');
+            lastNameInput.classList.add('invalid');
+            hasDuplicate = true;
+        } else {
+            // Non alors on ajoute l'identité au tableau
+            identities.push(identity);
+        }
+    });
+    return hasDuplicate; // renvoie true si doublon
+}
+
+
+
+function checkForDuplicates() {
+    const cards = document.querySelectorAll('.participant-card');
+    const identities = [];
+    let hasDuplicate = false;
+
+    cards.forEach(card => {
+        const id = card.getAttribute('data-id');
+        // on recup les valuers de CETTE carte
+        const lastNameInput = card.querySelector(`input[name="lastName_${id}"]`);
+        const firstNameInput = card.querySelector(`input[name="firstName_${id}"]`);
+
+        // On ne vérifie que si les deux champs (Nom ET Prénom) sont remplis
+        if (lastNameInput.value && firstNameInput.value) {
+            
+            // je CRÉE l'identité (ex: "houlbreque-dilan")
+            const identity = `${lastNameInput.value.trim().toLowerCase()}-${firstNameInput.value.trim().toLowerCase()}`;
+
+            // on ne verifie que si les champs sont rempli
+            if (identities.includes(identity)) {
+                // OUI DOUBLON ALORS :
+                firstNameInput.classList.add('invalid');
+                lastNameInput.classList.add('invalid');
+                hasDuplicate = true;
+            } else {
+                // Non alors on ajoute l'identité au tableau
+                identities.push(identity);
+                
+            }
+        }
+    });
+    
+    return hasDuplicate; 
+}
+
 // verfier TOUT les inputs pour afficher ou masqué le bouton
 
 function checkAllInputsValid() {
@@ -142,6 +205,12 @@ function checkAllInputsValid() {
             allValid = false;
         }
     });
+
+    // verifier les doublons
+    // si checkForDuplicates renvoie true alors y'a un doublon, donc allValid devient false
+    if (checkForDuplicates()) {
+        allValid = false;
+    }
 
     // activer ou désactiver btn ajouter
     btnAdd.disabled = !allValid;
