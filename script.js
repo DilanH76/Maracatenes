@@ -133,30 +133,6 @@ function validateInput(input) {
 
 }
 
-function checkForDuplicates() {
-    const cards = document.querySelectorAll('.participant-card');
-    const identities = [];
-    let hasDuplicate = false;
-
-    cards.forEach(card => {
-        const id = card.getAttribute('data-id');
-        // on recup les valuers de CETTE carte
-        const lastNameInput = card.querySelector(`input[name="lastName_${id}"]`);
-        const firstNameInput = card.querySelector(`input[name="firstName_${id}"]`);
-
-        // on ne verifie que si les champs sont rempli
-        if (identities.includes(identity)) {
-            // OUI DOUBLON ALORS : 
-            firstNameInput.classList.add('invalid');
-            lastNameInput.classList.add('invalid');
-            hasDuplicate = true;
-        } else {
-            // Non alors on ajoute l'identité au tableau
-            identities.push(identity);
-        }
-    });
-    return hasDuplicate; // renvoie true si doublon
-}
 
 
 
