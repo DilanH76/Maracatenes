@@ -9,39 +9,24 @@
   <body>
     <header>
       <h1>Maracatènes</h1>
-      <h4>Départ de la Catène, au Havre, dimanche 31 mai 2026 à 09h00</h4>
+      <h4>Le Maraton événement de l'année au Havre</h4>
+      <h3>Départ de la Catène le dimanche 31 mai 2026 à 09h00</h4>
+      <div class="registration-mode">
+        <input type="radio" name="mode" id="choix-solo" value="solo" checked onchange="switchMode('solo')">
+        <label for="choix-solo" class="mode-btn">
+        👤 Solo
+        </label>
+        <input type="radio" name="mode" id="choix-team" value="team" onchange="switchMode('team')">
+        <label for="choix-team" class="mode-btn">
+        👥 Équipe
+        </label>
+      </div>
     </header>
 
     <div class="main-container">
       <section class="forms-section">
         <form id="main-form">
-          <div
-            class="registration-mode"
-            style="text-align: center; margin-bottom: 20px"
-          >
-            <label
-              style="margin-right: 20px; font-weight: bold; font-size: 1.2rem"
-            >
-              <input
-                type="radio"
-                name="mode"
-                value="solo"
-                checked
-                onchange="switchMode('solo')"
-              />
-              Inscription Solo
-            </label>
-            <label style="font-weight: bold; font-size: 1.2rem">
-              <input
-                type="radio"
-                name="mode"
-                value="team"
-                onchange="switchMode('team')"
-              />
-              Inscription Équipe
-            </label>
-          </div>
-
+          
           <div id="participants-container"></div>
 
           <div class="controls">

@@ -33,42 +33,42 @@ function createParticipantHTML(id) {
     </h3>
 
     <div class="form-group">
-    <label>Nom*</label>
+    <label>Nom <span class="stars">*</span></label>
     <input type="text" name="lastName_${id}" class="input-check" required>
     </div>
 
     <div class="form-group">
-            <label>Prénom *</label>
+            <label>Prénom <span class="stars">*</span></label>
             <input type="text" name="firstName_${id}" class="input-check" required>
         </div>
 
         <div class="form-group">
-            <label>Age *</label>
+            <label>Age <span class="stars">*</span></label>
             <input type="number" name="age_${id}" class="input-check" min="18" max="99" required>
         </div>
 
         <div class="form-group">
-            <label>Email * (ex: nom@mail.com)</label>
+            <label>Email <span class="stars">*</span> (ex: nom@mail.com)</label>
             <input type="email" name="email_${id}" class="input-check" required placeholder="nom@mail.com">
         </div>
 
         <div class="form-group">
-            <label>Téléphone * (10 chiffres)</label>
+            <label>Téléphone <span class="stars">*</span> (10 chiffres)</label>
             <input type="tel" name="phone_${id}" class="input-check" required placeholder="0600000000">
         </div>
-
+        <p>(<span class="stars">*</span>) Ces champs sont obligatoires</p>
         <div class="radio-group">
             <p>Type de course :</p>
-            <input type="radio" name="race_${id}" value="semi" checked onchange="updateCart()"> 
-            <label>Semi-Marathon (${PRICE_SEMI}€)</label><br>
+            <input id="radio-semi" type="radio" name="race_${id}" value="semi"  onchange="updateCart()"> 
+            <label for="radio-semi">Semi-Marathon (${PRICE_SEMI}€)</label><br>
             
-            <input type="radio" name="race_${id}" value="full" onchange="updateCart()"> 
-            <label>Marathon Complet (${PRICE_FULL}€)</label>
+            <input id="radio-full" type="radio" name="race_${id}" value="full" onchange="updateCart()"> 
+            <label for="radio-full">Marathon Complet (${PRICE_FULL}€)</label>
         </div>
 
         <div class="radio-group">
-            <input type="radio" name="captain" value="${id}" ${id === 1 ? 'checked' : ''}>
-            <label>Je suis le capitaine</label>
+            <input id="radio-captain${id}" type="radio" name="captain" value="${id}" ${id === 1 ? 'checked' : ''}>
+            <label for="radio-captain${id}">Je suis le capitaine</label>
         </div>
     </div>
     `;
@@ -131,7 +131,7 @@ function validateInput(input) {
         isValid = phoneRegex.test(value);
     } else if (input.name.startsWith("age_")) {
         // Pour l'âge : On convertit le texte en nombre (parseInt) et on vérifie >= 18
-        isValid = (value !== "" && parseInt(value) >= 10);
+        isValid = (value !== "" && parseInt(value) >= 18 && parseInt(value) <= 99);
     } else {
         // Pour Nom/Prénom : Juste vérifier que ce n'est pas vide (trim enlève les espaces inutiles)
         isValid = value.trim() !== "";
