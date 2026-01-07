@@ -1,14 +1,16 @@
 // Config
-
+// Les Constantes : Ce sont des valeurs qui ne changeront JAMAIS
 const PRICE_SEMI = 90;
 const PRICE_FULL = 130;
 
 // Compteur participants 
-
+// participantsCount : Sert à donner un ID unique (1, 2, 3...) à chaque personne
 let participantsCount =0;
+// currentMode : Se souvient si on est en "solo" ou "team" pour adapter les règles.
 let currentMode = 'solo';
 
 // Element DOM
+// On va chercher les éléments par leur ID HTML et on les stocke dans des variables
 const container = document.getElementById('participants-container');
 const btnAdd = document.getElementById('btn-add-participant');
 const cartDetails = document.getElementById('cart-details');
@@ -17,7 +19,7 @@ const totalPriceEl = document.getElementById('total-price');
 
 
 // Fonction créer formulaire 
-
+// Décider si on affiche le bouton supprimer
 function createParticipantHTML(id) {
     // je calcule la condition pour afficher le bouton
     // Si on est en TEAM j'affiche le bouton seulement si l'id est > 2
