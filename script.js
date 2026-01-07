@@ -23,9 +23,9 @@ const totalPriceEl = document.getElementById('total-price');
 function createParticipantHTML(id) {
     // je calcule la condition pour afficher le bouton
     // Si on est en TEAM j'affiche le bouton seulement si l'id est > 2
-    // Sinon (SOLO), on affiche le bouton si l'id est > 1
+    // Sinon SOLO on affiche le bouton si l'id est > 1
     const showDeleteBtn = (currentMode === 'team') ? (id > 2) : (id > 1);
-
+    // ${id} permet d'insérer le numéro dynamique partout (pour les names, les ids, etc)
     return `
     <div class="participant-card" id="card-${id}" data-id="${id}">
     <h3>Participant ${id}
@@ -76,55 +76,67 @@ function createParticipantHTML(id) {
 }
 
 // Ajouter un participant 
-
+// Paramètre force = false : Par défaut, c'est un clic utilisateur (donc on vérifie).
+// Si le code envoie "true", c'est une initialisation (on force sans vérifier).
 function addParticipant(force = false) {
-    /* Si 'force' n'est pas égal à true donc c'est un clic utilisateur classique,
-    alors on fait la verif habituelle*/
+    // LA SÉCURITÉ :
+    // 1. Si on ne force pas (force !== true)
+    // 2. ET qu'il y a déjà des formulaires (length > 0)
+    // 3. ET que les champs actuels sont mal remplis (!checkAllInputsValid)
+    // ALORS : On bloque tout (return) et on affiche une alerte.
+
     if (force !== true && container.children.length > 0 && !checkAllInputsValid()) {
         alert("Veuillez remplir correctement tous les champs précédents avant d'ajouter un participant.");
         return;
     }
-
+    // On incrémente le compteur (Participant 1 devient 2, etc.)
     participantsCount++;
     // div temporaire pour creer le html
     const tempDiv = document.createElement('div');
     // note : on passe true/false au moment de l'appel pas ici
     tempDiv.innerHTML = createParticipantHTML(participantsCount);
-
+    // On prend l'enfant de cette div (le formulaire) et on l'ajoute physiquement au container HTML
     container.appendChild(tempDiv.firstElementChild);
-
+    // À chaque ajout, on recalcule le prix
     updateCart();
 }
 
 // supprimer un participanrt
 
+// window.removeParticipant : On l'attache à "window" pour qu'elle soit accessible 
+// directement depuis le HTML (onclick="removeParticipant(...)")
 window.removeParticipant = function(id) {
+    // On cherche la carte précise grâce à son ID unique
     const card = document.getElementById(`card-${id}`);
     if (card) {
-        card.remove();
+        card.remove(); // On la supprime du DOM
         updateCart(); // calcul du prix après suppression 
     } 
 
 };
 
 function validateInput(input) {
-    const value = input.value;
-    const name = input.name;
+    const value = input.value; // Ce que l'utilisateur a écrit
+    const name = input.name; // On part du principe que c'est bon, sauf preuve du contraire
     let isValid = true;
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
-
+    // Les Regex (Expressions Régulières) : Des motifs pour vérifier les formats.
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Vérifie forme a@b.c
+    const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/; // Vérifie numéros français
+    
+    // On regarde le TYPE ou le NOM de l'input pour choisir le bon test
     if (input.type === "email") {
         isValid = emailRegex.test(value);
     } else if (input.type === "tel") {
         isValid = phoneRegex.test(value);
     } else if (input.name.startsWith("age_")) {
+        // Pour l'âge : On convertit le texte en nombre (parseInt) et on vérifie >= 18
         isValid = (value !== "" && parseInt(value) >= 10);
     } else {
+        // Pour Nom/Prénom : Juste vérifier que ce n'est pas vide (trim enlève les espaces inutiles)
         isValid = value.trim() !== "";
     }
-
+    // GESTION VISUELLE : Ajoute ou enlève la classe CSS "invalid" (bordure rouge)
     if (isValid) {
         input.classList.remove('invalid');
     } else {
@@ -137,50 +149,52 @@ function validateInput(input) {
 
 
 
-
+// C'est ici qu'on vérifie si une personne s'inscrit deux fois
 function checkForDuplicates() {
-    const cards = document.querySelectorAll('.participant-card');
-    const identities = [];
-    let hasDuplicate = false;
+    const cards = document.querySelectorAll('.participant-card'); // On récupère toutes les cartes
+    const identities = []; // Une liste vide pour noter les noms qu'on croise
+    let hasDuplicate = false; // Drapeau : pour l'instant, pas de doublon
 
     cards.forEach(card => {
         const id = card.getAttribute('data-id');
-        // on recup les valuers de CETTE carte
+        // On cible les inputs Nom et Prénom de CETTE carte
         const lastNameInput = card.querySelector(`input[name="lastName_${id}"]`);
         const firstNameInput = card.querySelector(`input[name="firstName_${id}"]`);
 
-        // On ne vérifie que si les deux champs (Nom ET Prénom) sont remplis
+        // On ne travaille que si les deux champs sont remplis
         if (lastNameInput.value && firstNameInput.value) {
             
-            // je CRÉE l'identité (ex: "houlbreque-dilan")
+            // CRÉATION DE L'EMPREINTE : 
+            // On colle Nom + Prénom en minuscules (ex: "dupont-jean").
+            // toLowerCase() sert à éviter que "Jean" et "jean" soient vus comme différents.
             const identity = `${lastNameInput.value.trim().toLowerCase()}-${firstNameInput.value.trim().toLowerCase()}`;
 
-            // on ne verifie que si les champs sont rempli
+            // VERIFICATION : Est-ce que cette empreinte est DÉJÀ dans notre liste ?
             if (identities.includes(identity)) {
-                // OUI DOUBLON ALORS :
+                // OUI -> C'est un doublon !
                 firstNameInput.classList.add('invalid');
                 lastNameInput.classList.add('invalid');
-                hasDuplicate = true;
+                hasDuplicate = true; // On lève le drapeau d'erreur
             } else {
-                // Non alors on ajoute l'identité au tableau
+                // NON -> On l'ajoute à la liste pour les suivants
                 identities.push(identity);
                 
             }
         }
     });
     
-    return hasDuplicate; 
+    return hasDuplicate; // Renvoie true si on a trouvé au moins un doublon
 }
 
 // verfier TOUT les inputs pour afficher ou masqué le bouton
 
 function checkAllInputsValid() {
-    const allInputs = document.querySelectorAll('.input-check');
+    const allInputs = document.querySelectorAll('.input-check'); // Tous les champs
     let allValid = true;
-
+    // 1. On passe chaque champ au contrôle technique (validateInput)
     allInputs.forEach(input => {
         if (!validateInput(input)) {
-            allValid = false;
+            allValid = false; // Si un seul échoue, tout échoue
         }
     });
 
@@ -208,35 +222,37 @@ function updateCart() {
         // on recup quel radio es coché dans cette carte
         const id = card.getAttribute('data-id');
         const raceInput = card.querySelector(`input[name="race_${id}"]:checked`);
-        
+        // Sécurité : on ne calcule que si un bouton est bien coché
         if(raceInput) {
             const raceType = raceInput.value;
+            // Opérateur ternaire pour définir le prix et le nom
             const price = (raceType === 'semi') ? PRICE_SEMI : PRICE_FULL;
             const raceName = (raceType === 'semi') ? "Semi-Marathon" : "Marathon Complet";
     
-            total += price;
-            
+            total += price; // On ajoute au total
+            // On ajoute une ligne au résumé HTML
             htmlContent += `<p>Participant ${index + 1} (${raceName}) <span>${price}€</span></p>`;
         }
     
     });
-
+    // On affiche le tout à l'écran
     cartDetails.innerHTML = htmlContent;
     totalPriceEl.textContent = total;
 
+    // Astuce : À chaque fois qu'on change un prix, on revérifie aussi si les boutons doivent être grisés
     checkAllInputsValid();
 }
 
 // mode solo ou equipe
 
 function switchMode(mode) {
-    currentMode = mode;
-    // je vide les conteneurs
-    container.innerHTML = '';
-    participantsCount = 0; // reset compteur
+    currentMode = mode; // On met à jour la variable globale (la mémoire)
+    container.innerHTML = ''; // On vide tout l'écran (reset)
+    participantsCount = 0; // On remet les compteurs à zéro
     // je regarde le mode choisit 
     if (mode === 'solo') {
-        // mode Solo  on force l'ajout du 1er (pas besoin de verif car c'est vide)
+        // Mode Solo : On force l'ajout de 1 personne.
+        // On cache le bouton "Ajouter" (car solo = 1 personne max)
         addParticipant(true);
         // désactiver le btn ajouter car mode solo
         btnAdd.style.display = 'none';
@@ -246,25 +262,35 @@ function switchMode(mode) {
         // Le "true" dit à la fonction = "T'inquiète c'est vide c'est normal, ajoute quand même"
         addParticipant(true); 
         addParticipant(true); 
-        
+        // On affiche le bouton pour en ajouter d'autres.
         btnAdd.style.display = 'block';
     }
-    // Maj du total
+    // On met à jour le panier (90€ ou 180€ direct)
     updateCart();
 }
 
 // ecouteur d'evenement 
 
-// btn ajouté 
+// 1. Quand on clique sur le bouton "+", on lance addParticipant
 btnAdd.addEventListener('click', addParticipant);
 
+
+// 2. DÉLÉGATION D'ÉVÉNEMENT
+// On écoute "input" sur le container GLOBAL.
+// Pourquoi ? Parce que les champs input n'existent pas encore au début !
+// Si on écoutait directement les inputs, ça ne marcherait pas pour les nouveaux ajoutés.
 container.addEventListener('input', (e) => {
+    // Si l'élément qui a déclenché l'événement a la classe 'input-check'
     if (e.target.classList.contains('input-check')) {
-        validateInput(e.target);
-        checkAllInputsValid();
+        validateInput(e.target); // On le valide
+        checkAllInputsValid(); // On vérifie tout le formulaire
     }
 });
 
+
+// INITIALISATION
+// On enlève le "addParticipant()" qui était ici, car switchMode le fait déjà !
+// On lance le mode solo par défaut au chargement de la page.
 addParticipant();
 
 btnAdd.disabled = false;
