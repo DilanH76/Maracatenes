@@ -1,3 +1,47 @@
+
+
+// je sélectionne le bouton lune qui a l'id theme-toggle
+// j'écoute le clic sur ce bouton
+// quand je clique, ça toggle en mode dark sur la classe dark-mode
+// quand je clique, je change l'icône - si c'est sombre, le logo affiché est un soleil ☀️
+//                                      si c'est clair, le logo affiché est une lune 🌙
+
+
+
+const themeBtn=document.getElementById("theme-toggle");
+
+function toggleMode () {
+    document.body.classList.toggle("dark-mode");
+    if (document.body.classList.contains("dark-mode")){
+        themeBtn.textContent="☀️";
+    }
+    else {themeBtn.textContent="🌙";}
+}
+
+themeBtn.addEventListener('click',toggleMode);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Config
 // Les Constantes : Ce sont des valeurs qui ne changeront JAMAIS
 const PRICE_SEMI = 90;
@@ -5,7 +49,7 @@ const PRICE_FULL = 130;
 
 // Compteur participants 
 // participantsCount : Sert à donner un ID unique (1, 2, 3...) à chaque personne
-let participantsCount =0;
+let participantsCount = 0;
 // currentMode : Se souvient si on est en "solo" ou "team" pour adapter les règles.
 let currentMode = 'solo';
 
@@ -32,30 +76,41 @@ function createParticipantHTML(id) {
     ${showDeleteBtn ? `<button type="button" class="btn-delete"onclick="removeParticipant(${id})">Supprimer</button>` : ''}
     </h3>
 
-    <div class="form-group">
-    <label>Nom <span class="stars">*</span></label>
-    <input type="text" name="lastName_${id}" class="input-check" required>
-    </div>
+        <div class="form-group">
+            <label>Nom <span class="stars">*</span></label>
+            <input type="text" name="lastName_${id}" class="input-check" required>
+        </div>
 
-    <div class="form-group">
+        <span class="status-icon"></span>
+
+        <div class="form-group">
             <label>Prénom <span class="stars">*</span></label>
             <input type="text" name="firstName_${id}" class="input-check" required>
         </div>
+
+        <span class="status-icon"></span>
 
         <div class="form-group">
             <label>Age <span class="stars">*</span></label>
             <input type="number" name="age_${id}" class="input-check" min="18" max="99" required>
         </div>
 
+        <span class="status-icon"></span>
+
         <div class="form-group">
             <label>Email <span class="stars">*</span> (ex: nom@mail.com)</label>
             <input type="email" name="email_${id}" class="input-check" required placeholder="nom@mail.com">
         </div>
 
+        <span class="status-icon"></span>
+
         <div class="form-group">
             <label>Téléphone <span class="stars">*</span> (10 chiffres)</label>
             <input type="tel" name="phone_${id}" class="input-check" required placeholder="0600000000">
         </div>
+
+        <span class="status-icon"></span>
+
         <p>(<span class="stars">*</span>) Ces champs sont obligatoires</p>
         <div class="radio-group">
             <p>Type de course :</p>
@@ -105,25 +160,26 @@ function addParticipant(force = false) {
 
 // window.removeParticipant : On l'attache à "window" pour qu'elle soit accessible 
 // directement depuis le HTML (onclick="removeParticipant(...)")
-window.removeParticipant = function(id) {
+window.removeParticipant = function (id) {
     // On cherche la carte précise grâce à son ID unique
     const card = document.getElementById(`card-${id}`);
     if (card) {
         card.remove(); // On la supprime du DOM
         updateCart(); // calcul du prix après suppression 
-    } 
+    }
 
 };
 
 function validateInput(input) {
     const value = input.value; // Ce que l'utilisateur a écrit
-    const name = input.name; // On part du principe que c'est bon, sauf preuve du contraire
+    const name = input.name;
+    // On part du principe que c'est bon, sauf preuve du contraire
     let isValid = true;
 
     // Les Regex (Expressions Régulières) : Des motifs pour vérifier les formats.
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Vérifie forme a@b.c
     const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/; // Vérifie numéros français
-    
+
     // On regarde le TYPE ou le NOM de l'input pour choisir le bon test
     if (input.type === "email") {
         isValid = emailRegex.test(value);
@@ -163,7 +219,7 @@ function checkForDuplicates() {
 
         // On ne travaille que si les deux champs sont remplis
         if (lastNameInput.value && firstNameInput.value) {
-            
+
             // CRÉATION DE L'EMPREINTE : 
             // On colle Nom + Prénom en minuscules (ex: "dupont-jean").
             // toLowerCase() sert à éviter que "Jean" et "jean" soient vus comme différents.
@@ -178,11 +234,11 @@ function checkForDuplicates() {
             } else {
                 // NON -> On l'ajoute à la liste pour les suivants
                 identities.push(identity);
-                
+
             }
         }
     });
-    
+
     return hasDuplicate; // Renvoie true si on a trouvé au moins un doublon
 }
 
@@ -214,7 +270,7 @@ function checkAllInputsValid() {
 
 function updateCart() {
     let total = 0;
-    let htmlContent = "" ; 
+    let htmlContent = "";
 
     const cards = document.querySelectorAll('.participant-card');
 
@@ -223,17 +279,17 @@ function updateCart() {
         const id = card.getAttribute('data-id');
         const raceInput = card.querySelector(`input[name="race_${id}"]:checked`);
         // Sécurité : on ne calcule que si un bouton est bien coché
-        if(raceInput) {
+        if (raceInput) {
             const raceType = raceInput.value;
             // Opérateur ternaire pour définir le prix et le nom
             const price = (raceType === 'semi') ? PRICE_SEMI : PRICE_FULL;
             const raceName = (raceType === 'semi') ? "Semi-Marathon" : "Marathon Complet";
-    
+
             total += price; // On ajoute au total
             // On ajoute une ligne au résumé HTML
             htmlContent += `<p>Participant ${index + 1} (${raceName}) <span>${price}€</span></p>`;
         }
-    
+
     });
     // On affiche le tout à l'écran
     cartDetails.innerHTML = htmlContent;
@@ -260,8 +316,8 @@ function switchMode(mode) {
     } else if (mode === 'team') {
         // mode équipe  on FORCE l'ajout des deux premier
         // Le "true" dit à la fonction = "T'inquiète c'est vide c'est normal, ajoute quand même"
-        addParticipant(true); 
-        addParticipant(true); 
+        addParticipant(true);
+        addParticipant(true);
         // On affiche le bouton pour en ajouter d'autres.
         btnAdd.style.display = 'block';
     }

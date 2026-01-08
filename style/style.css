@@ -7,9 +7,24 @@
     --white: #ffffff;
     --grey: #f0f0f0;
     --error: #e74c3c;
+    --hac-ciel-dark:var(--hac-marine);
+    --hac-marine-dark:var(--hac-ciel);
 }
 
 /* ----------Style de la page---------- */
+
+.btn-theme{
+    background-color: transparent;
+    border-radius: 30%;
+    border: solid var(--white);
+    cursor: pointer;
+    font-size: 1.5rem;
+    padding: 0.3rem;
+}
+
+body.dark-mode{
+    background: linear-gradient(to right, var(--hac-ciel-dark), var(--hac-marine-dark));
+}
 
 body {
     background: linear-gradient(to right, var(--hac-ciel),var(--hac-marine));
