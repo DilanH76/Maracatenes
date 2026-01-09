@@ -281,6 +281,9 @@ function updateCart() {
 // mode solo ou equipe
 
 function switchMode(mode) {
+
+    const savedData = getParticipantOneData();
+
     currentMode = mode; // On met à jour la variable globale (la mémoire)
     container.innerHTML = ''; // On vide tout l'écran (reset)
     participantsCount = 0; // On remet les compteurs à zéro
@@ -300,9 +303,66 @@ function switchMode(mode) {
         // On affiche le bouton pour en ajouter d'autres.
         btnAdd.style.display = 'block';
     }
+
+    // restauration : Maintenant que les formulaires sont recréés, on remet les infos
+    restoreParticipantOneData(savedData);
+
     // On met à jour le panier (90€ ou 180€ direct)
     updateCart();
+    checkAllInputsValid();
 }
+
+// Fonctions de sauvegarde de données du form solo
+// Fonction pour lire les données du participant 1 
+function getParticipantOneData () {
+    // Si le formulaire n'existe pas encore (au tout début), on ne renvoie rien
+    const lastNameInput = document.querySelector('input[name="lastName_1"]');
+    if (!lastNameInput) return null;
+    
+    // On retourne un objet ( une boîte) avec toutes les valeurs
+    return {
+        lastName: lastNameInput.value,
+        firstName: document.querySelector('input[name="firstName_1"]').value,
+        age: document.querySelector('input[name="age_1"]').value,
+        email: document.querySelector('input[name="email_1"]').value,
+        phone: document.querySelector('input[name="phone_1"]').value,
+        // Pour les radios, on recup celui qui es coché
+        race: document.querySelector('input[name="race_1"]:checked').value
+    };
+}
+
+// Fonction pour "Ré-écrire" les données dans le Participant 1
+
+function restoreParticipantOneData(data) {
+    if (!data) return; // Si il y'avait rien à sauvegarder, on s'arrête
+    
+    // Sinon
+    // On remplit les champs de texte
+    const inputs = [
+        { name: 'lastName_1', value: data.lastName },
+        { name: 'firstName_1', value: data.firstName },
+        { name: 'age_1', value: data.age },
+        { name: 'email_1', value: data.email },
+        { name: 'phone_1', value: data.phone }
+    ];
+
+    inputs.forEach(item => {
+        const input = document.querySelector(`input[name="${item.name}"]`);
+        if (input) {
+            input.value = item.value;
+            validateInput(input);
+        }
+
+    });
+
+    // On recoche le bon bouton radio ( course ) 
+    const raceRadio = document.querySelector(`input[name="race_1"][value=${data.race}"]`);
+    if (raceRadio) {
+        raceRadio.checked = true;
+    }
+
+}
+
 
 // mode jour/nuit
 
