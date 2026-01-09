@@ -6,9 +6,10 @@
     --hac-marine: #002e5d;
     --white: #ffffff;
     --grey: #f0f0f0;
-    --error: #e74c3c;
+    --error: #fd648c;
     --hac-ciel-dark:var(--hac-marine);
     --hac-marine-dark:var(--hac-ciel);
+    --valid: #53c986;
 }
 
 /* ----------Style de la page---------- */
@@ -193,11 +194,46 @@ input.invalid {
     background-color: var(--grey);
 }
 
+input.valid {
+    border-color: var(--valid);
+    background-color: var(--grey);
+
+}
+
 .radio-group {
     margin: 15px 0;
     background: var(--grey);
     padding: 10px;
     border-radius: 4px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding-right: 35px;
+}
+
+
+.status-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    font-size: 1.2rem;
+    transform: translateY(-40%);
+}
+ 
+
+input.valid + .status-icon::after {
+    content: "✅";
+}
+
+input.invalid + .status-icon::after {
+    content: "❌";
 }
 
 /* Section Panier */

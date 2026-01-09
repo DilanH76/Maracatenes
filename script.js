@@ -1,3 +1,5 @@
+// ✅
+// ❌
 // Config
 // Les Constantes : Ce sont des valeurs qui ne changeront JAMAIS
 const PRICE_SEMI = 90;
@@ -34,7 +36,7 @@ function createParticipantHTML(id) {
         </h3>
 
         <div class="form-group">
-            <label>Nom <span class="stars">*</span></label>
+            <label>Nom<span class="stars">*</span></label>
             <div class="input-wrapper">
                 <input type="text" name="lastName_${id}" class="input-check" required>
                 <span class="status-icon"></span>
@@ -42,7 +44,7 @@ function createParticipantHTML(id) {
         </div>
 
         <div class="form-group">
-            <label>Prénom <span class="stars">*</span></label>
+            <label>Prénom<span class="stars">*</span></label>
             <div class="input-wrapper">
                 <input type="text" name="firstName_${id}" class="input-check" required>
                 <span class="status-icon"></span>
@@ -50,7 +52,7 @@ function createParticipantHTML(id) {
         </div>
 
         <div class="form-group">
-            <label>Age <span class="stars">*</span></label>
+            <label>Age<span class="stars">*</span></label>
             <div class="input-wrapper">
                 <input type="number" name="age_${id}" class="input-check" min="18" max="99" required>
                 <span class="status-icon"></span>
@@ -58,7 +60,7 @@ function createParticipantHTML(id) {
         </div>
 
         <div class="form-group">
-            <label>Email <span class="stars">*</span></label>
+            <label>Email<span class="stars">*</span></label>
             <div class="input-wrapper">
                 <input type="email" name="email_${id}" class="input-check" required placeholder="nom@mail.com">
                 <span class="status-icon"></span>
@@ -66,7 +68,7 @@ function createParticipantHTML(id) {
         </div>
 
         <div class="form-group">
-            <label>Téléphone <span class="stars">*</span></label>
+            <label>Téléphone<span class="stars">*</span></label>
             <div class="input-wrapper">
                 <input type="tel" name="phone_${id}" class="input-check" required placeholder="0600000000">
                 <span class="status-icon"></span>
@@ -135,12 +137,18 @@ window.removeParticipant = function (id) {
 function validateInput(input) {
     const value = input.value; // Ce que l'utilisateur a écrit
     const name = input.name;
-    // On part du principe que c'est bon, sauf preuve du contraire
-    let isValid = true;
+    let isValid = false;
 
     // Les Regex (Expressions Régulières) : Des motifs pour vérifier les formats.
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Vérifie forme a@b.c
     const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/; // Vérifie numéros français
+
+    if (value.trim() === "") {
+        input.classList.remove('valid');
+        input.classList.remove('invalid');
+        return false;
+    }
+
 
     // On regarde le TYPE ou le NOM de l'input pour choisir le bon test
     if (input.type === "email") {
@@ -156,8 +164,12 @@ function validateInput(input) {
     }
     // GESTION VISUELLE : Ajoute ou enlève la classe CSS "invalid" (bordure rouge)
     if (isValid) {
+        // C'est BON -> VERT
         input.classList.remove('invalid');
+        input.classList.add('valid');
     } else {
+        // C'est FAUX -> ROUGE
+        input.classList.remove('valid');
         input.classList.add('invalid');
     }
 
@@ -190,8 +202,12 @@ function checkForDuplicates() {
             // VERIFICATION : Est-ce que cette empreinte est DÉJÀ dans notre liste ?
             if (identities.includes(identity)) {
                 // OUI -> C'est un doublon !
+                firstNameInput.classList.remove('valid');
                 firstNameInput.classList.add('invalid');
+
+                lastNameInput.classList.remove('valid');
                 lastNameInput.classList.add('invalid');
+
                 hasDuplicate = true; // On lève le drapeau d'erreur
             } else {
                 // NON -> On l'ajoute à la liste pour les suivants
@@ -227,6 +243,7 @@ function checkAllInputsValid() {
 
     return allValid;
 }
+
 
 // gestion du panier 
 
