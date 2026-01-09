@@ -317,9 +317,7 @@ container.addEventListener('input', (e) => {
 
 
 // INITIALISATION
-// On enlève le "addParticipant()" qui était ici, car switchMode le fait déjà !
 // On lance le mode solo par défaut au chargement de la page.
-addParticipant();
 
 btnAdd.disabled = false;
 
