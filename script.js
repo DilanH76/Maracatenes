@@ -29,53 +29,58 @@ function createParticipantHTML(id) {
     // ${id} permet d'insérer le numéro dynamique partout (pour les names, les ids, etc)
     return `
     <div class="participant-card" id="card-${id}" data-id="${id}">
-    <h3>Participant ${id}
-    ${showDeleteBtn ? `<button type="button" class="btn-delete"onclick="removeParticipant(${id})">Supprimer</button>` : ''}
-    </h3>
+        <h3>Participant ${id}
+        ${showDeleteBtn ? `<button type="button" class="btn-delete" onclick="removeParticipant(${id})">Supprimer</button>` : ''}
+        </h3>
 
         <div class="form-group">
             <label>Nom <span class="stars">*</span></label>
-            <input type="text" name="lastName_${id}" class="input-check" required>
+            <div class="input-wrapper">
+                <input type="text" name="lastName_${id}" class="input-check" required>
+                <span class="status-icon"></span>
+            </div>
         </div>
-
-        <span class="status-icon"></span>
 
         <div class="form-group">
             <label>Prénom <span class="stars">*</span></label>
-            <input type="text" name="firstName_${id}" class="input-check" required>
+            <div class="input-wrapper">
+                <input type="text" name="firstName_${id}" class="input-check" required>
+                <span class="status-icon"></span>
+            </div>
         </div>
-
-        <span class="status-icon"></span>
 
         <div class="form-group">
             <label>Age <span class="stars">*</span></label>
-            <input type="number" name="age_${id}" class="input-check" min="18" max="99" required>
+            <div class="input-wrapper">
+                <input type="number" name="age_${id}" class="input-check" min="18" max="99" required>
+                <span class="status-icon"></span>
+            </div>
         </div>
-
-        <span class="status-icon"></span>
 
         <div class="form-group">
-            <label>Email <span class="stars">*</span> (ex: nom@mail.com)</label>
-            <input type="email" name="email_${id}" class="input-check" required placeholder="nom@mail.com">
+            <label>Email <span class="stars">*</span></label>
+            <div class="input-wrapper">
+                <input type="email" name="email_${id}" class="input-check" required placeholder="nom@mail.com">
+                <span class="status-icon"></span>
+            </div>
         </div>
-
-        <span class="status-icon"></span>
 
         <div class="form-group">
-            <label>Téléphone <span class="stars">*</span> (10 chiffres)</label>
-            <input type="tel" name="phone_${id}" class="input-check" required placeholder="0600000000">
+            <label>Téléphone <span class="stars">*</span></label>
+            <div class="input-wrapper">
+                <input type="tel" name="phone_${id}" class="input-check" required placeholder="0600000000">
+                <span class="status-icon"></span>
+            </div>
         </div>
-
-        <span class="status-icon"></span>
-
+        
         <p>(<span class="stars">*</span>) Ces champs sont obligatoires</p>
         <div class="radio-group">
             <p>Type de course :</p>
-            <input id="radio-semi" type="radio" name="race_${id}" value="semi"  onchange="updateCart()"> 
-            <label for="radio-semi">Semi-Marathon (${PRICE_SEMI}€)</label><br>
+            <input id="radio-semi-${id}" type="radio" name="race_${id}" value="semi" checked onchange="updateCart()"> 
+            <label for="radio-semi-${id}">Semi-Marathon (${PRICE_SEMI}€)</label><br>
             
-            <input id="radio-full" type="radio" name="race_${id}" value="full" onchange="updateCart()"> 
-            <label for="radio-full">Marathon Complet (${PRICE_FULL}€)</label>
+            <input id="radio-full-${id}" type="radio" name="race_${id}" value="full" onchange="updateCart()"> 
+            <label for="radio-full-${id}">Marathon Complet (${PRICE_FULL}€)</label>
         </div>
 
         <div class="radio-group">
