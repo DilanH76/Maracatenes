@@ -1,51 +1,8 @@
-
-
-// je sélectionne le bouton lune qui a l'id theme-toggle
-// j'écoute le clic sur ce bouton
-// quand je clique, ça toggle en mode dark sur la classe dark-mode
-// quand je clique, je change l'icône - si c'est sombre, le logo affiché est un soleil ☀️
-//                                      si c'est clair, le logo affiché est une lune 🌙
-
-
-
-const themeBtn=document.getElementById("theme-toggle");
-
-function toggleMode () {
-    document.body.classList.toggle("dark-mode");
-    if (document.body.classList.contains("dark-mode")){
-        themeBtn.textContent="☀️";
-    }
-    else {themeBtn.textContent="🌙";}
-}
-
-themeBtn.addEventListener('click',toggleMode);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Config
 // Les Constantes : Ce sont des valeurs qui ne changeront JAMAIS
 const PRICE_SEMI = 90;
 const PRICE_FULL = 130;
+const themeBtn=document.getElementById("theme-toggle");
 
 // Compteur participants 
 // participantsCount : Sert à donner un ID unique (1, 2, 3...) à chaque personne
@@ -325,6 +282,16 @@ function switchMode(mode) {
     updateCart();
 }
 
+// mode jour/nuit
+
+function toggleMode () {
+    document.body.classList.toggle("dark-mode");
+    if (document.body.classList.contains("dark-mode")){
+        themeBtn.textContent="☀️";
+    }
+    else {themeBtn.textContent="🌙";}
+}
+
 // ecouteur d'evenement 
 
 // 1. Quand on clique sur le bouton "+", on lance addParticipant
@@ -352,3 +319,5 @@ addParticipant();
 btnAdd.disabled = false;
 
 switchMode('solo');
+
+themeBtn.addEventListener('click',toggleMode);
