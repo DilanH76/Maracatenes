@@ -1,5 +1,3 @@
-// ✅
-// ❌
 // Config
 // Les Constantes : Ce sont des valeurs qui ne changeront JAMAIS
 const PRICE_SEMI = 90;
@@ -18,6 +16,8 @@ const container = document.getElementById('participants-container');
 const btnAdd = document.getElementById('btn-add-participant');
 const cartDetails = document.getElementById('cart-details');
 const totalPriceEl = document.getElementById('total-price');
+const btnCancel = document.querySelector('.btn-cancel');
+const btnTop = document.getElementById('btn-back-to-top');
 
 
 
@@ -78,10 +78,10 @@ function createParticipantHTML(id) {
         <p>(<span class="stars">*</span>) Ces champs sont obligatoires</p>
         <div class="radio-group">
             <p>Type de course :</p>
-            <input id="radio-semi-${id}" type="radio" name="race_${id}" value="semi" checked onchange="updateCart()"> 
+            <input id="radio-semi-${id}" type="radio" class="input-race" name="race_${id}" value="semi" onchange="updateCart()"> 
             <label for="radio-semi-${id}">Semi-Marathon (${PRICE_SEMI}€)</label><br>
             
-            <input id="radio-full-${id}" type="radio" name="race_${id}" value="full" onchange="updateCart()"> 
+            <input id="radio-full-${id}" type="radio" class="input-race" name="race_${id}" value="full" onchange="updateCart()"> 
             <label for="radio-full-${id}">Marathon Complet (${PRICE_FULL}€)</label>
         </div>
 
@@ -238,6 +238,18 @@ function checkAllInputsValid() {
         allValid = false;
     }
 
+    const cards = document.querySelectorAll('.participant-card');
+    cards.forEach(function(card) {
+        const id = card.getAttribute('data-id');
+        //Est ce qu'il y'a une course coché pour ce participant ?
+        const raceChecked = card.querySelector(`input[name="race_${id}"]:checked`);
+
+        // Si non, le formulaire n'est pas valide
+        if (!raceChecked) {
+            allValid = false;
+        }
+    });
+
     // activer ou désactiver btn ajouter
     btnAdd.disabled = !allValid;
 
@@ -245,7 +257,7 @@ function checkAllInputsValid() {
 }
 
 
-// gestion du panier 
+// GESTION DU PANIER  
 
 function updateCart() {
     let total = 0;
@@ -256,17 +268,36 @@ function updateCart() {
     cards.forEach((card, index) => {
         // on recup quel radio es coché dans cette carte
         const id = card.getAttribute('data-id');
+        //On récupère les noms
+        const lastNameInput = card.querySelector(`input[name="lastName_${id}"]`);
+        const firstNameInput = card.querySelector(`input[name="firstName_${id}"]`);
+        //On récupère le type de course
         const raceInput = card.querySelector(`input[name="race_${id}"]:checked`);
         // Sécurité : on ne calcule que si un bouton est bien coché
         if (raceInput) {
             const raceType = raceInput.value;
-            // Opérateur ternaire pour définir le prix et le nom
-            const price = (raceType === 'semi') ? PRICE_SEMI : PRICE_FULL;
-            const raceName = (raceType === 'semi') ? "Semi-Marathon" : "Marathon Complet";
-
+            let price = 0;
+            let raceName = "";
+            
+            if (raceType === 'semi') {
+                price = PRICE_SEMI;
+                raceName = "semi";
+            } else {
+                price = PRICE_FULL;
+                raceName = "Marathon";
+            }
+            
             total += price; // On ajoute au total
+
+
+            let displayName = "Participant " + (index+1);
+
+            if (lastNameInput.value.trim() !== "" || firstNameInput.value.trim() !== "") {
+                displayName = lastNameInput.value.toUpperCase() + " " + firstNameInput.value;
+            }
+
             // On ajoute une ligne au résumé HTML
-            htmlContent += `<p>Participant ${index + 1} (${raceName}) <span>${price}€</span></p>`;
+            htmlContent += `<p><strong>${displayName}</strong> (${raceName}) <span>${price}€</span></p>`;
         }
 
     });
@@ -278,7 +309,7 @@ function updateCart() {
     checkAllInputsValid();
 }
 
-// mode solo ou equipe
+// MODE SOLO OU EQUIPE
 
 function switchMode(mode) {
 
@@ -318,6 +349,9 @@ function getParticipantOneData () {
     // Si le formulaire n'existe pas encore (au tout début), on ne renvoie rien
     const lastNameInput = document.querySelector('input[name="lastName_1"]');
     if (!lastNameInput) return null;
+
+    const raceInput = document.querySelector('input[name="race_1"]:checked');
+    const raceValue= raceInput ? raceInput.value : null;
     
     // On retourne un objet ( une boîte) avec toutes les valeurs
     return {
@@ -327,7 +361,7 @@ function getParticipantOneData () {
         email: document.querySelector('input[name="email_1"]').value,
         phone: document.querySelector('input[name="phone_1"]').value,
         // Pour les radios, on recup celui qui es coché
-        race: document.querySelector('input[name="race_1"]:checked').value
+        race: raceValue
     };
 }
 
@@ -355,16 +389,17 @@ function restoreParticipantOneData(data) {
 
     });
 
-    // On recoche le bon bouton radio ( course ) 
-    const raceRadio = document.querySelector(`input[name="race_1"][value=${data.race}"]`);
-    if (raceRadio) {
+    // On recoche le bon bouton radio ( course )
+    if (data.race){
+        const raceRadio = document.querySelector(`input[name="race_1"][value="${data.race}"]`);
+        if (raceRadio) {
         raceRadio.checked = true;
+        }
     }
-
 }
 
 
-// mode jour/nuit
+// MODE JOUR / NUIT
 
 function toggleMode () {
     document.body.classList.toggle("dark-mode");
@@ -374,11 +409,12 @@ function toggleMode () {
     else {themeBtn.textContent="🌙";}
 }
 
-// ecouteur d'evenement 
+
+
+// ECOUTEUR D'EVENEMENTS ( LISTENER ) 
 
 // 1. Quand on clique sur le bouton "+", on lance addParticipant
 btnAdd.addEventListener('click', addParticipant);
-
 
 // 2. DÉLÉGATION D'ÉVÉNEMENT
 // On écoute "input" sur le container GLOBAL.
@@ -389,8 +425,93 @@ container.addEventListener('input', (e) => {
     if (e.target.classList.contains('input-check')) {
         validateInput(e.target); // On le valide
         checkAllInputsValid(); // On vérifie tout le formulaire
+        updateCart(); // on met à jour le panier
     }
 });
+
+
+// BOUTONS 
+
+if (btnCancel) {
+    btnCancel.addEventListener('click', function() {
+
+        let confirmReset = confirm("Êtes-vous sûr de vouloir tout effacer ?")
+        if (!confirmReset) return;
+        // Si on est en équipe, on doit supprimer les participants en trop (3, 4, 5 ... )
+        // pour garder les 2 obligatoires
+        if (currentMode === 'team') {
+            const allCards = document.querySelectorAll('.participant-card');
+            // Boucle "pour chaque carte dans la liste"
+            for (const card of allCards) {
+                // on lit l'id (ex 3 ) et on le transforme en chiffre
+                let id = parseInt(card.getAttribute('data-id'));
+
+                // Si c'est le participant 3 ou plus...
+                if (id > 2) {
+                    card.remove();//...on le supprime
+                }
+            }
+
+            // IMPORTANT : On remet le compteur à 2.
+            // Sinon le compteur continue de s'incrémenter 
+            participantsCount = 2;
+
+        }
+
+        // Nettoyage des champs ( ceux qui restent)
+        const remainingInputs = document.querySelectorAll('.input-check');
+
+        for (const input of remainingInputs) {
+            input.value = ""; // on vide le texte
+            input.classList.remove('valid');
+            input.classList.remove('invalid');
+        }
+
+
+        // Nettoyage des boutons
+        const allRaceRadios = document.querySelectorAll('.input-race');
+
+        for (const radio of allRaceRadios) {
+            radio.checked = false; // on décoche tout 
+        }
+
+        // Reset du capitaine
+        //on cherche le bouton radio qui a le name="captain" ET la value="1"
+        const captainOne = document.querySelector('input[name="captain"][value="1"]');
+        if (captainOne) {
+            captainOne.checked = true; // on force le cochage sur le premier
+        }
+
+        updateCart();
+        checkAllInputsValid();
+
+
+    });
+}
+
+if (btnTop) {
+
+    // GEstion de l'apparition
+    //on doit écouter le défilement de la fenêtre " window "
+    window.addEventListener('scroll', function() {
+        // window.scrollY = Nombre de pixel qu'on a descendu
+        if (window.scrollY > 300) {
+            // Si on a descendu de plus de 300px, on montre le bouton
+            btnTop.classList.add('visible');
+        } else {
+            // sinon on le cache
+            btnTop.classList.remove('visible');
+        }
+    });
+
+    // Geestion du clique
+    btnTop.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
+    });
+}
 
 
 // INITIALISATION
